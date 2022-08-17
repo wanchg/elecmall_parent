@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.gmall.mapper.BaseAttrInfoMapper">
+
+    <resultMap id="attrInfoAndValue" type="com.atguigu.gmall.model.product.BaseAttrInfo">
+        <id property="id" column="id"></id>
+        <result property="categoryLevel" column="category_level"></result>
+        <result property="attrName" column="attr_name"></result>
+        <result property="categoryId" column="category_id"></result>
+
+        <collection property="attrValueList" ofType="com.atguigu.gmall.model.product.BaseAttrValue">
+            <id column="valueid" property="id"></id>
+            <result property="attrId" column="attr_id"></result>
+            <result property="valueName" column="value_name"></result>
+        </collection>
+    </resultMap>
+    
+<select id="getValueByAllId" parameterType="long" resultMap="attrInfoAndValue">
+    select
+    bai.id,
+    bai.attr_name,
+    bai.category_id,
+    bai.category_level,
+    bav.id valueid,
+    bav.value_name,
+    bav.attr_id
+     from base_attr_info bai inner join base_attr_value bav on bai.id=bav.attr_id
+    <where>
+        <if test="oneId != null and oneId != 0">
+            or bai.category_id=#{oneId} and bai.category_level=1
+        </if>
+
+        <if test="twoId != null and twoId != 0">
+            or bai.category_id=#{twoId} and bai.category_level=2
+        </if>
+
+        <if test="threeId != null and threeId != 0">
+            or bai.category_id=#{threeId} and bai.category_level=3
+        </if>
+    </where>
+</select>
+
+    <select id="selectBaseAttrInfoListBySkuId" parameterType="long" resultMap="attrInfoAndValue">
+        select
+           sav.`id`,
+           bai.`attr_name`,
+           bai.`category_id`,
+           bai.`category_level`,
+           bav.`value_name`,
+           sav.`attr_id`,
+           sav.`value_id`
+         from base_attr_info bai inner join base_attr_value bav on bai.`id`=bav.`attr_id`
+        inner join sku_attr_value sav on sav.`value_id`=bav.`id` where sav.`sku_id`=#{skuId};
+    </select>
+
+<!--    <resultMap id="BaseAttrInfoMap" type="com.atguigu.gmall.model.product.BaseAttrInfo" autoMapping="true">
+        <id column="id" property="id"></id>
+    <collection property="attrValueList" ofType="com.atguigu.gmall.model.product.BaseAttrValue"></collection>
+    <association property="categoryLevel" javaType="com.atguigu.gmall.model.product.BaseAttrValue"></association>
+</resultMap>
+<select id="getValueByAllId" resultMap="BaseAttrInfoMap"></select>-->
+</mapper>

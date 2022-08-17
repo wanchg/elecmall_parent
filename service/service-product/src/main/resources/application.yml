@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: service-product
+#引入开发环境的配置文件
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.200.128:8848
